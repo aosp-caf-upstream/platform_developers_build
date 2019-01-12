@@ -33,8 +33,8 @@ take place.
 Pre-requisites
 --------------
 
-- Android SDK 27
-- Android Build Tools v27.0.2
+- Android SDK 25
+- Android Build Tools v25.0.3
 - Android Support Repository
 
 Screenshots

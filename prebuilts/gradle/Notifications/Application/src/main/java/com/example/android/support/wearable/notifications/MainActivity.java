@@ -58,12 +58,12 @@ public class MainActivity extends Activity implements Handler.Callback {
     private CheckBox mIncludeContentIntentCheckbox;
     private CheckBox mVibrateCheckbox;
     private BackgroundPickers mBackgroundPickers;
-    private int mPostedNotificationCount = 0;
+    private int postedNotificationCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
 
         mHandler = new Handler(this);
         mTextChangedListener = new UpdateNotificationsOnTextChangeListener();
@@ -172,25 +172,15 @@ public class MainActivity extends Activity implements Handler.Callback {
     private void updateTextEditors(NotificationPreset preset) {
         mTitleEditText.setText(getString(preset.titleResId));
         mTextEditText.setText(getString(preset.textResId));
-
-        View[] presetViews = {
-                findViewById(R.id.title_label),
-                findViewById(R.id.title_editor),
-                findViewById(R.id.text_label),
-                findViewById(R.id.text_editor)
-        };
-
         if (preset == NotificationPresets.BASIC) {
-            for (View v : presetViews) {
-                v.setVisibility(View.VISIBLE);
-            }
+            findViewById(R.id.title_edit_field).setVisibility(View.VISIBLE);
             mTitleEditText.addTextChangedListener(mTextChangedListener);
+            findViewById(R.id.text_edit_field).setVisibility(View.VISIBLE);
             mTextEditText.addTextChangedListener(mTextChangedListener);
         } else {
-            for (View v : presetViews) {
-                v.setVisibility(View.GONE);
-            }
+            findViewById(R.id.title_edit_field).setVisibility(View.GONE);
             mTitleEditText.removeTextChangedListener(mTextChangedListener);
+            findViewById(R.id.text_edit_field).setVisibility(View.GONE);
             mTextEditText.removeTextChangedListener(mTextChangedListener);
         }
     }
@@ -205,10 +195,9 @@ public class MainActivity extends Activity implements Handler.Callback {
 
         if (cancelExisting) {
             // Cancel all existing notifications to trigger fresh-posting behavior: For example,
-            // switching from HIGH to LOW priority does not cause a reordering in Notification
-            // Shade.
+            // switching from HIGH to LOW priority does not cause a reordering in Notification Shade.
             NotificationManagerCompat.from(this).cancelAll();
-            mPostedNotificationCount = 0;
+            postedNotificationCount = 0;
 
             // Post the updated notifications on a delay to avoid a cancel+post race condition
             // with notification manager.
@@ -226,27 +215,12 @@ public class MainActivity extends Activity implements Handler.Callback {
         sendBroadcast(new Intent(NotificationIntentReceiver.ACTION_ENABLE_MESSAGES)
                 .setClass(this, NotificationIntentReceiver.class));
 
-        Notification[] notifications = buildNotifications();
-
-        // Post new notifications
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        for (int i = 0; i < notifications.length; i++) {
-            notificationManagerCompat.notify(i, notifications[i]);
-        }
-        // Cancel any that are beyond the current count.
-        for (int i = notifications.length; i < mPostedNotificationCount; i++) {
-            notificationManagerCompat.cancel(i);
-        }
-        mPostedNotificationCount = notifications.length;
-    }
-
-    /**
-     * Build the sample notifications
-     */
-
-    private Notification[] buildNotifications() {
         NotificationPreset preset = NotificationPresets.PRESETS[
                 mPresetSpinner.getSelectedItemPosition()];
+        CharSequence titlePreset = mTitleEditText.getText();
+        CharSequence textPreset = mTextEditText.getText();
+        PriorityPreset priorityPreset = PriorityPresets.PRESETS[
+                mPrioritySpinner.getSelectedItemPosition()];
         ActionsPreset actionsPreset = ActionsPresets.PRESETS[
                 mActionsSpinner.getSelectedItemPosition()];
         if (preset.actionsRequired() && actionsPreset == ActionsPresets.NO_ACTIONS_PRESET) {
@@ -256,16 +230,26 @@ public class MainActivity extends Activity implements Handler.Callback {
                     actionsPreset), true);
         }
         NotificationPreset.BuildOptions options = new NotificationPreset.BuildOptions(
-                mTitleEditText.getText(),
-                mTextEditText.getText(),
-                PriorityPresets.PRESETS[mPrioritySpinner.getSelectedItemPosition()],
+                titlePreset,
+                textPreset,
+                priorityPreset,
                 actionsPreset,
                 mIncludeLargeIconCheckbox.isChecked(),
                 mLocalOnlyCheckbox.isChecked(),
                 mIncludeContentIntentCheckbox.isChecked(),
                 mVibrateCheckbox.isChecked(),
                 mBackgroundPickers.getRes());
-        return preset.buildNotifications(this, options);
+        Notification[] notifications = preset.buildNotifications(this, options);
+
+        // Post new notifications
+        for (int i = 0; i < notifications.length; i++) {
+            NotificationManagerCompat.from(this).notify(i, notifications[i]);
+        }
+        // Cancel any that are beyond the current count.
+        for (int i = notifications.length; i < postedNotificationCount; i++) {
+            NotificationManagerCompat.from(this).cancel(i);
+        }
+        postedNotificationCount = notifications.length;
     }
 
     @Override
@@ -288,14 +272,17 @@ public class MainActivity extends Activity implements Handler.Callback {
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {}
+        public void onNothingSelected(AdapterView<?> adapterView) {
+        }
     }
 
     private class UpdateNotificationsOnTextChangeListener implements TextWatcher {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
 
         @Override
         public void afterTextChanged(Editable s) {

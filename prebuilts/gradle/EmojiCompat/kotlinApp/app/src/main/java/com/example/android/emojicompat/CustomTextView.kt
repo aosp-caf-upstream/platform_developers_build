@@ -38,19 +38,6 @@ class CustomTextView @JvmOverloads constructor(
 
     private var mEmojiTextViewHelper: EmojiTextViewHelper? = null
 
-    /**
-     * Returns the [EmojiTextViewHelper] for this TextView.
-     *
-     * This property can be called from super constructors through [#setFilters] or [#setAllCaps].
-     */
-    private val emojiTextViewHelper: EmojiTextViewHelper
-        get() {
-            if (mEmojiTextViewHelper == null) {
-                mEmojiTextViewHelper = EmojiTextViewHelper(this)
-            }
-            return mEmojiTextViewHelper as EmojiTextViewHelper
-        }
-
     init {
         emojiTextViewHelper.updateTransformationMethod()
     }
@@ -63,5 +50,19 @@ class CustomTextView @JvmOverloads constructor(
         super.setAllCaps(allCaps)
         emojiTextViewHelper.setAllCaps(allCaps)
     }
+
+    /**
+     * Returns the [EmojiTextViewHelper] for this TextView.
+
+     *
+     * This property can be called from super constructors through [#setFilters] or [#setAllCaps].
+     */
+    private val emojiTextViewHelper: EmojiTextViewHelper
+        get() {
+            if (mEmojiTextViewHelper == null) {
+                mEmojiTextViewHelper = EmojiTextViewHelper(this)
+            }
+            return mEmojiTextViewHelper as EmojiTextViewHelper
+        }
 
 }

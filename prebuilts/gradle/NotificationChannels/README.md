@@ -41,8 +41,8 @@ startActivity(intent);
 Pre-requisites
 --------------
 
-- Android SDK 27
-- Android Build Tools v27.0.2
+- Android SDK Preview O
+- Android Build Tools v25.0.3
 - Android Support Repository
 
 Screenshots

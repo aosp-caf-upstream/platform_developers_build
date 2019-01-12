@@ -17,12 +17,12 @@
 package com.example.android.appusagestatistics;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 
 /**
  * Launcher Activity for the App Usage Statistics sample app.
  */
-public class AppUsageStatisticsActivity extends AppCompatActivity {
+public class AppUsageStatisticsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
